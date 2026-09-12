@@ -2,9 +2,12 @@ package org.example.registration.service;
 
 import org.example.registration.dao.StudentDao;
 import org.example.registration.dto.StudentDto;
+import org.example.registration.dto.UpdatesStudentDto;
+import org.example.registration.model.Department;
 import org.example.registration.model.StudentModel;
 import org.example.registration.util.Response;
 
+import java.util.List;
 import java.util.Optional;
 
 //create the service that adds the student from the addStudent repo
@@ -17,24 +20,68 @@ import java.util.Optional;
 //        but if true, get the obj from the optional and return a true response
 
         public class StudentService {
-    private final StudentDao studentDao = new StudentDao();
+            //holds the repo methods
+            private final StudentDao studentDao = new StudentDao();
+
+    //first service: create student
     public Response createStudent(StudentDto studentDto){
-    StudentModel student = new StudentModel(studentDto);
+
+        String name = studentDto.getName();
+        String email = studentDto.getEmail();
+
+        //validation
+        if (name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if(email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$")){
+            throw new IllegalArgumentException("invalid email. try again");
+        }
+        if(studentDto.getDepartment() == null){
+            throw new IllegalArgumentException("department was not selected for student");
+        }
+
+        //only build the model once the dto is valid -- ie creating an instance
+        StudentModel student = new StudentModel(studentDto);
 
     Optional<StudentModel> optionalStudent = studentDao.saveStudent(student);
-    if(optionalStudent.isEmpty()) {
-        return new Response(
-                false,
-                "something went wrong",
-                null
-        );
-    }
+       if(optionalStudent.isEmpty()) {
+           return new Response(false,"something went wrong",null);
+      }
+
     StudentModel savedStudent = optionalStudent.get();
-    return new Response(true,
-                        "student created successfully",
-                        savedStudent
-                        );
+       return new Response(true,"student created successfully",savedStudent);
 
 }
+
+    //second service: read student
+    public Response readStudents(){
+        List<StudentModel> students = studentDao.findAll();
+        if (students.isEmpty()){
+            return new Response(false, "cannot fetch students", null);
+        }
+        return new Response(true,"student fetched successfully",students);
+
+    }
+
+    //third service update
+    public Response deleteStudent(String email) {
+        Optional<StudentModel> foundStudent = studentDao.findByEmail(email);
+
+        if (foundStudent.isEmpty()) {
+            return new Response(false, "Cannot delete student that does not exist", null);
+        }
+
+        StudentModel existingStudent = foundStudent.get();
+
+        boolean isDeleted = studentDao.deleteStudent(existingStudent.getId());
+
+        if (!isDeleted) {
+            return new Response(false, "Failed to delete student", null);
+        }
+
+        return new Response(true, "Student deleted successfully", null);
+    }
+
+
 
 }

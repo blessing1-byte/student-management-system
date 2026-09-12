@@ -12,6 +12,9 @@ public class StudentModel {
     private String email;
     private Department department;
 
+    //this is essential for fetch in the repo to prevent it from asking for an argument
+    public StudentModel(){}
+
     public StudentModel(StudentDto studentDto) {
         this.id = generateId();
         this.name = studentDto.getName();
@@ -21,6 +24,7 @@ public class StudentModel {
     public static String generateId(){
 return UUID.randomUUID().toString();
     }
+
 
     public String getId() {
         return id;
