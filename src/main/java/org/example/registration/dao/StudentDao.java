@@ -1,44 +1,47 @@
 package org.example.registration.dao;
 
 import org.example.registration.model.StudentModel;
+import org.example.registration.util.DatabaseConnection;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class StudentDao {
-//    the student da represents the sql commands that carries out the functions of:
-//    create, read, update and delete
-//    it does not contain any logic
-//            the service layer holds the business rules
-//    the dto defines the schema, ie the data that will be collected from the user
 
-public Optional<StudentModel> saveStudent(StudentModel studentModel){
-    //string sql student
-    String sql ="INSERT INTO student(id, name, email, department)" + "VALUES(?,?,?,?)";
-    try(
-            Connection conn = getConnection();
-            PreparedStatement preparedStmt = conn.prepareStatement(sql)
+    // The StudentDao contains SQL commands for database operations.
+    // Business validation belongs in the Service layer.
 
-            ){
-        preparedStmt.setString(1,studentModel.getId());
-        preparedStmt.setString(2,studentModel.getName());
-        preparedStmt.setString(3,studentModel.getEmail());
-        preparedStmt.setString(4,studentModel.getDepartment().name());
+    public Optional<StudentModel> saveStudent(StudentModel studentModel) {
 
-        //equivalent to result.rows[0]
-        int rowInserted = preparedStmt.executeUpdate();
-        if(rowInserted > 0){
-            System.out.println("student created successfully");
-        }else{
-            System.out.println("failed to create student");
-           return Optional.empty();
+        String sql = "INSERT INTO Student " +
+                "(Student_name, Student_email, Student_department) " +
+                "VALUES (?, ?, ?)";
+
+        try (
+                Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement preparedStmt = conn.prepareStatement(sql)
+        ) {
+
+            preparedStmt.setString(1, studentModel.getName());
+            preparedStmt.setString(2, studentModel.getEmail());
+            preparedStmt.setString(3, studentModel.getDepartment().name());
+
+            int rowInserted = preparedStmt.executeUpdate();
+
+            if (rowInserted > 0) {
+                System.out.println("Student created successfully");
+            } else {
+                System.out.println("Failed to create student");
+                return Optional.empty();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+            return Optional.empty();
         }
 
-    }catch(SQLException e){
-        System.out.println("Database error: "+ e.getMessage());
-return Optional.empty();
+        return Optional.of(studentModel);
     }
-    return Optional.ofNullable(studentModel);
-};
 }

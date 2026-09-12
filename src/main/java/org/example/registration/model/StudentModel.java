@@ -3,30 +3,25 @@ package org.example.registration.model;
 import org.example.registration.dto.StudentDto;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class StudentModel {
-    //id, name, email
-    private String id;
+
+    private Integer id;
     private String name;
     private String email;
     private Department department;
 
     public StudentModel(StudentDto studentDto) {
-        this.id = generateId();
         this.name = studentDto.getName();
         this.email = studentDto.getEmail();
         this.department = studentDto.getDepartment();
     }
-    public static String generateId(){
-return UUID.randomUUID().toString();
-    }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -58,8 +53,13 @@ return UUID.randomUUID().toString();
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         StudentModel that = (StudentModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && department == that.department;
+
+        return Objects.equals(id, that.id)
+                && Objects.equals(name, that.name)
+                && Objects.equals(email, that.email)
+                && department == that.department;
     }
 
     @Override
