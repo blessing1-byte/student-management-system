@@ -64,6 +64,56 @@ import java.util.Optional;
     }
 
     //third service update
+    public Response updateStudent(UpdatesStudentDto updateDto) {
+        Optional<StudentModel> foundStudent = studentDao.findByEmail(updateDto.getCurrentEmail());
+
+        if (foundStudent.isEmpty()) {
+            return new Response(false, "Student does not exist", null);
+        }
+
+        StudentModel existingStudent = foundStudent.get();
+
+        // empty input keeps old value
+        String newName = (updateDto.getName() == null || updateDto.getName().trim().isEmpty())
+                ? existingStudent.getName()
+                : updateDto.getName();
+
+        String newEmail = (updateDto.getEmail() == null || updateDto.getEmail().trim().isEmpty())
+                ? existingStudent.getEmail()
+                : updateDto.getEmail();
+
+        Department newDepartment = (updateDto.getDepartment() == null)
+                ? existingStudent.getDepartment()
+                : updateDto.getDepartment();
+
+        // validation on the FINAL merged values
+        if (newName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+        if (!newEmail.matches("^[\\w.-]+@[\\w.-]+\\.\\w+$")) {
+            throw new IllegalArgumentException("Invalid email. Try again");
+        }
+        if (newDepartment == null) {
+            throw new IllegalArgumentException("Department was not selected for student");
+        }
+
+        // build updated model using the EXISTING id — never a freshly generated one
+        StudentModel updatedStudent = new StudentModel();
+        updatedStudent.setId(existingStudent.getId());
+        updatedStudent.setName(newName);
+        updatedStudent.setEmail(newEmail);
+        updatedStudent.setDepartment(newDepartment);
+
+        boolean isUpdated = studentDao.updateStudent(updatedStudent);
+
+        if (!isUpdated) {
+            return new Response(false, "Failed to update student", null);
+        }
+
+        return new Response(true, "Student updated successfully", updatedStudent);
+    }
+
+
     public Response deleteStudent(String email) {
         Optional<StudentModel> foundStudent = studentDao.findByEmail(email);
 

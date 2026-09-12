@@ -26,7 +26,7 @@ public Optional<StudentModel> saveStudent(StudentModel studentModel){
             PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
             ){
-        preparedStmt.setString(1,studentModel.getId());
+        preparedStmt.setInt(1,studentModel.getId());
         preparedStmt.setString(2,studentModel.getName());
         preparedStmt.setString(3,studentModel.getEmail());
         preparedStmt.setString(4,studentModel.getDepartment().name());
@@ -60,7 +60,7 @@ return Optional.empty();
             //this simple say after executing the query in result set,move to the next line
             while (resultSet.next()) {
                 StudentModel student = new StudentModel(); //create model
-                student.setId(resultSet.getString("id"));
+                student.setId(resultSet.getInt("id"));
                 student.setName(resultSet.getString("name"));
                 student.setEmail(resultSet.getString("email"));
                 student.setDepartment(Department.valueOf(resultSet.getString("department")));
@@ -85,9 +85,9 @@ return Optional.empty();
             try(ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     StudentModel student = new StudentModel();
-                    student.setId(rs.getString("id"));
-                    student.setId(rs.getString("name"));
-                    student.setId(rs.getString("email"));
+                    student.setId(rs.getInt("id"));
+                    student.setName(rs.getString("name"));
+                    student.setEmail(rs.getString("email"));
                     student.setDepartment(Department.valueOf(rs.getString("department")));
                     return Optional.of(student);
                 }
@@ -109,7 +109,7 @@ return Optional.empty();
                 PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
         ){
-            preparedStmt.setString(1,studentModel.getId());
+            preparedStmt.setInt(1,studentModel.getId());
             preparedStmt.setString(2,studentModel.getName());
             preparedStmt.setString(3,studentModel.getEmail());
             preparedStmt.setString(4,studentModel.getDepartment().name());
@@ -125,7 +125,7 @@ return Optional.empty();
     };
 
     //delete action
-    public boolean deleteStudent(String id) {
+    public boolean deleteStudent(Integer id) {
         String sql = "DELETE FROM students WHERE id = ?";
 
         try (
@@ -144,4 +144,4 @@ return Optional.empty();
 
 }
 
-}
+

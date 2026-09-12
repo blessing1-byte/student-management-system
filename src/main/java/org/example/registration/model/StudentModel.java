@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class StudentModel {
     //id, name, email
-    private String id;
+    private Integer id;
     private String name;
     private String email;
     private Department department;
@@ -16,21 +16,17 @@ public class StudentModel {
     public StudentModel(){}
 
     public StudentModel(StudentDto studentDto) {
-        this.id = generateId();
         this.name = studentDto.getName();
         this.email = studentDto.getEmail();
         this.department = studentDto.getDepartment();
     }
-    public static String generateId(){
-return UUID.randomUUID().toString();
-    }
 
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
