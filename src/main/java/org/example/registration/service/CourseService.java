@@ -14,7 +14,7 @@ public class CourseService {
     private final CourseDao courseDao = new CourseDao();
 
     //first service: create course
-    public Response createCourse(CourseDto courseDto) {
+    public Response addCourse(CourseDto courseDto) {
 
         String name = courseDto.getCourseName();
         String courseCode = courseDto.getCourseCode();
@@ -44,7 +44,7 @@ public class CourseService {
     }
 
     //second service: read course
-    public Response readCourse() {
+    public Response viewCourses() {
         List<CourseModel> courses = courseDao.findAll();
         if (courses.isEmpty()) {
             return new Response(false, "cannot fetch courses", null);
@@ -54,7 +54,8 @@ public class CourseService {
 
     //third service: update course
     public Response updateCourse(UpdatesCourseDto updateDto) {
-        Optional<CourseModel> foundCourse = courseDao.findByCourseCode(updateDto.getCurrentCourseCode());
+        String currentCourseCode = updateDto.getCurrentCourseCode();
+        Optional<CourseModel> foundCourse = courseDao.findByCourseCode(currentCourseCode);
 
         if (foundCourse.isEmpty()) {
             return new Response(false, "Course does not exist", null);

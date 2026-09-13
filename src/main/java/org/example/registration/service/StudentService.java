@@ -24,7 +24,7 @@ import java.util.Optional;
             private final StudentDao studentDao = new StudentDao();
 
     //first service: create student
-    public Response createStudent(StudentDto studentDto){
+    public Response addStudent(StudentDto studentDto){
 
         String name = studentDto.getName();
         String email = studentDto.getEmail();
@@ -54,7 +54,7 @@ import java.util.Optional;
 }
 
     //second service: read student
-    public Response readStudents(){
+    public Response viewStudents(){
         List<StudentModel> students = studentDao.findAll();
         if (students.isEmpty()){
             return new Response(false, "cannot fetch students", null);

@@ -4,22 +4,34 @@ package org.example.registration.ui;
 //import org.example.registration.service.EnrollmentService;
 //import org.example.registration.service.StudentService;
 
+import org.example.registration.dto.CourseDto;
+import org.example.registration.dto.EnrollmentDto;
+import org.example.registration.dto.StudentDto;
+import org.example.registration.dto.UpdatesStudentDto;
+import org.example.registration.model.CourseModel;
+import org.example.registration.model.Department;
+import org.example.registration.service.CourseService;
+import org.example.registration.service.EnrollmentService;
+import org.example.registration.service.StudentService;
+import org.example.registration.util.Response;
+
 import java.util.Scanner;
 
 public class ConsoleMenu {
-//    private final StudentService studentService;
-//    private final CourseService courseService;
-//    private final EnrollmentService enrollmentService;
+    private final StudentService studentService;
+    private final CourseService courseService;
+    private final EnrollmentService enrollmentService;
     private final Scanner scanner;
 
     public ConsoleMenu() {
-//        this.studentService = new StudentService();
-//        this.courseService = new CourseService();
-//        this.enrollmentService = new EnrollmentService();
+        this.studentService = new StudentService();
+        this.courseService = new CourseService();
+        this.enrollmentService = new EnrollmentService();
         this.scanner = new Scanner(System.in);
     }
 
     public void start() {
+
         boolean running = true;
 
         while (running) {
@@ -71,19 +83,42 @@ public class ConsoleMenu {
         return input;
     }
 
+    //response handler
+    private void handleResponse(Response response) {
+        if (response.getIsSuccessful()) {
+            System.out.println(response.getMessage());
+        } else {
+            System.out.println("Failed: " + response.getMessage());
+        }
+    }
+
+    //create student
     private void addStudent() {
         System.out.println("\n--- Add New Student ---");
         System.out.print("Enter Student Name: ");
         String name = scanner.nextLine();
+
         System.out.print("Enter Email: ");
         String email = scanner.nextLine();
-        System.out.print("Enter Department: ");
-        String dept = scanner.nextLine();
 
-        // Service call placeholder
-        System.out.println("Student registration attempt recorded for: " + name);
+        System.out.print("Enter Department (COMPUTER_SCIENCE, ACCOUNTING, ENGINEERING, BUSINESS_ADMINISTRATION): ");
+        Department department;
+        try {
+            String input = scanner.nextLine().toUpperCase();
+            department = Department.valueOf(input);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid department. Available departments are: " +
+                    "COMPUTER_SCIENCE, ACCOUNTING, ENGINEERING & BUSINESS_ADMINISTRATION");
+            return;
+        }
+
+        StudentDto studentDto = new StudentDto(name, email, department);
+        Response response = studentService.addStudent(studentDto);
+
+        handleResponse(response);
     }
 
+    //create course
     private void addCourse() {
         System.out.println("\n--- Add New Course ---");
         System.out.print("Enter Course Name: ");
@@ -93,52 +128,113 @@ public class ConsoleMenu {
         int credits = getIntInput("Enter Credit Unit: ");
 
         // Service call placeholder
+        CourseDto courseDto = new CourseDto(courseName, code, credits);
+        Response response = courseService.addCourse(courseDto);
+        handleResponse(response);
+
         System.out.println("Course registration attempt recorded for: " + courseName);
     }
 
+    //enroll students
     private void registerStudentToCourse() {
         System.out.println("\n--- Register Student to Course ---");
-        int studentId = getIntInput("Enter Student ID: ");
-        int courseId = getIntInput("Enter Course ID: ");
+        System.out.println("Enter Student email: ");
+        String studentEmail = scanner.nextLine();
+        System.out.println("Enter Course ID: ");
+        String courseCode = scanner.nextLine();
 
         // Service call placeholder
-        System.out.println("Enrollment attempt recorded for Student ID " + studentId + " in Course ID " + courseId);
+        EnrollmentDto enrollmentDto = new EnrollmentDto(studentEmail, courseCode);
+        Response response = enrollmentService.registerStudentToCourse(enrollmentDto);
+        handleResponse(response);
+
+        System.out.println("Enrollment attempt recorded for Student email : "
+                + studentEmail + " in Course code " + courseCode);
     }
 
+    //view students
     private void viewStudents() {
         System.out.println("\n--- Viewing All Students ---");
-        // Wire to studentService fetch methods
+        Response response = studentService.viewStudents();
+        handleResponse(response);
     }
 
+    //view courses
     private void viewCourses() {
         System.out.println("\n--- Viewing All Courses ---");
         // Wire to courseService fetch methods
+        Response response = courseService.viewCourses();
+        handleResponse(response);
     }
 
+    //view student records
     private void viewStudentEnrollments() {
         System.out.println("\n--- Viewing Student Enrollments ---");
-        int studentId = getIntInput("Enter Student ID: ");
+        System.out.println("Enter Student Email: ");
+        String studentEmail = scanner.nextLine();
         // Wire to enrollmentService fetch methods
+        Response response = enrollmentService.viewStudentEnrollments(studentEmail);
+        handleResponse(response);
     }
+
 
     private void updateStudent() {
         System.out.println("\n--- Update Student Details ---");
-        int studentId = getIntInput("Enter Student ID to update: ");
-        System.out.print("Enter New Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter New Email: ");
-        String email = scanner.nextLine();
+        System.out.print("Enter Student email to update: ");
+        String studentEmail = scanner.nextLine();
 
-        // Wire to studentService update methods
+        UpdatesStudentDto updatesStudentDto = new UpdatesStudentDto(studentEmail);
+
+        System.out.print("Enter New Name (leave blank to keep current): ");
+        String name = scanner.nextLine();
+        if (!name.trim().isEmpty()) {
+            updatesStudentDto.setName(name);
+        }
+
+        System.out.print("Enter New Email (leave blank to keep current): ");
+        String email = scanner.nextLine();
+        if (!email.trim().isEmpty()) {
+            updatesStudentDto.setEmail(email);
+        }
+
+        System.out.print("Enter New Department (leave blank to keep current): ");
+        String deptInput = scanner.nextLine();
+        if (!deptInput.trim().isEmpty()) {
+            try {
+                Department department = Department.valueOf(deptInput.toUpperCase());
+                updatesStudentDto.setDepartment(department);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid department entered. Update cancelled.");
+                return;
+            }
+        }
+
+        Response response = studentService.updateStudent(updatesStudentDto);
+        handleResponse(response);
     }
 
+    //delete record
     private void deleteRecord() {
         System.out.println("\n--- Delete Record ---");
         System.out.println("1. Delete Student");
         System.out.println("2. Delete Course");
         int option = getIntInput("Select record type to delete: ");
-        int targetId = getIntInput("Enter ID to delete: ");
 
-        // Wire to DAO/Service delete methods
+        if (option == 1) {
+            System.out.print("Enter student email to delete: ");
+            String email = scanner.nextLine();
+            Response response = studentService.deleteStudent(email);
+            handleResponse(response);
+
+        } else if (option == 2) {
+            System.out.print("Enter course code to delete: ");
+            String courseCode = scanner.nextLine();
+            Response response = courseService.deleteCourse(courseCode);
+            handleResponse(response);
+
+        } else {
+            System.out.println("Invalid option selected.");
+        }
     }
+
 }

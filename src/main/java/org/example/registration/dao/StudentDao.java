@@ -22,16 +22,15 @@ public class StudentDao {
 
 public Optional<StudentModel> saveStudent(StudentModel studentModel){
     //string sql student
-    String sql ="INSERT INTO student(id, name, email, department)" + "VALUES(?,?,?,?)";
+    String sql ="INSERT INTO student(name, email, department)" + "VALUES(?,?,?)";
     try(
             Connection conn = DatabaseConnection.getConnection();
             PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
             ){
-        preparedStmt.setInt(1,studentModel.getId());
-        preparedStmt.setString(2,studentModel.getName());
-        preparedStmt.setString(3,studentModel.getEmail());
-        preparedStmt.setString(4,studentModel.getDepartment().name());
+        preparedStmt.setString(1,studentModel.getName());
+        preparedStmt.setString(2,studentModel.getEmail());
+        preparedStmt.setString(3,studentModel.getDepartment().name());
 
         //equivalent to result.rows[0]
         int rowInserted = preparedStmt.executeUpdate();
@@ -77,7 +76,7 @@ return Optional.empty();
 
     //find by email
     public Optional<StudentModel> findByEmail(String email){
-        String sql = "SELECT id, name, email, department from user WHERE id = ?";
+        String sql = "SELECT id, name, email, department from user WHERE email = ?";
         try(
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
