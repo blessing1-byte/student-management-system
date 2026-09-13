@@ -18,7 +18,7 @@ public class EnrollmentService {
     CourseDao courseDao = new CourseDao();
     EnrollmentDao enrollmentDao = new EnrollmentDao();
     //creation of student enrollment
-    public Response enrollStudent(EnrollmentDto enrollmentDto){
+    public Response  registerStudentToCourse(EnrollmentDto enrollmentDto){
 
         String studentEmail = enrollmentDto.getStudentEmail();
         String courseCode = enrollmentDto.getCourseCode();
@@ -51,7 +51,8 @@ public class EnrollmentService {
         return  new Response(true, "Student enrolled successfully", enrolledStudent);
     };
 
-public Response findStudentEnrollment(String studentEmail){
+
+public Response viewStudentEnrollments(String studentEmail){
     Optional<StudentModel> student = studentDao.findByEmail(studentEmail);
     if (student.isEmpty()){
         return  new Response(false, "student not found", null);
@@ -59,7 +60,7 @@ public Response findStudentEnrollment(String studentEmail){
     StudentModel foundStudent = student.get();
     Integer foundId = foundStudent.getId();
 
-    List<EnrollmentModel> studentRecords = enrollmentDao.findByStudentId(foundId);
+    Optional<EnrollmentModel> studentRecords = enrollmentDao.findByStudentId(foundId);
     if(studentRecords.isEmpty()){
         return new Response(false, "Student has no records to show yet.", null);
     }
