@@ -4,9 +4,7 @@ import org.example.registration.ui.ConsoleMenu;
 
 public class Main {
     public static void main(String[] args) {
-
-        ConsoleMenu consoleMenu = new ConsoleMenu();
-        consoleMenu.start();
-        }
-
+        ConsoleMenu menu = new ConsoleMenu();
+        menu.start();
+    }
 }
