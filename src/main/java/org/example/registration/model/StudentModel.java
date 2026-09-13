@@ -11,6 +11,9 @@ public class StudentModel {
     private String email;
     private Department department;
 
+    // This is essential for fetch in the repo to prevent it from asking for an argument
+    public StudentModel() {}
+
     public StudentModel(StudentDto studentDto) {
         this.name = studentDto.getName();
         this.email = studentDto.getEmail();
