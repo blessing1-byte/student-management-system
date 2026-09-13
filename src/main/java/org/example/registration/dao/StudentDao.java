@@ -2,6 +2,7 @@ package org.example.registration.dao;
 
 import org.example.registration.model.Department;
 import org.example.registration.model.StudentModel;
+import org.example.registration.util.DatabaseConnection;
 
 import java.sql.*;
 import java.sql.SQLException;
@@ -18,11 +19,12 @@ public class StudentDao {
 //    the dto defines the schema, ie the data that will be collected from the user
 
     //create action
+
 public Optional<StudentModel> saveStudent(StudentModel studentModel){
     //string sql student
     String sql ="INSERT INTO student(id, name, email, department)" + "VALUES(?,?,?,?)";
     try(
-            Connection conn = getConnection();
+            Connection conn = DatabaseConnection.getConnection();
             PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
             ){
@@ -52,7 +54,7 @@ return Optional.empty();
         List<StudentModel> students = new ArrayList<>();
         String sql = "SELECT * FROM students";
         try (
-                Connection conn = getConnection();
+                Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 ResultSet resultSet = stmt.executeQuery()
 
@@ -77,7 +79,7 @@ return Optional.empty();
     public Optional<StudentModel> findByEmail(String email){
         String sql = "SELECT id, name, email, department from user WHERE id = ?";
         try(
-                Connection conn = getConnection;
+                Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
                 )
         {
@@ -105,7 +107,7 @@ return Optional.empty();
         //string sql student
         String sql ="UPDATE student SET name=?, email=?, department=? WHERE id=?";
         try(
-                Connection conn = getConnection();
+                Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
         ){
@@ -129,10 +131,10 @@ return Optional.empty();
         String sql = "DELETE FROM students WHERE id = ?";
 
         try (
-                Connection conn = getConnection();
+                Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement preparedStmt = conn.prepareStatement(sql)
         ) {
-            preparedStmt.setString(1, id);
+            preparedStmt.setInt(1, id);
             int rowsAffected = preparedStmt.executeUpdate();
             return rowsAffected > 0;
 

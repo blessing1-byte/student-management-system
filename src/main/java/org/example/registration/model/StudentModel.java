@@ -13,7 +13,7 @@ public class StudentModel {
     private Department department;
 
     //this is essential for fetch in the repo to prevent it from asking for an argument
-    public StudentModel(){}
+    public StudentModel(){};
 
     public StudentModel(StudentDto studentDto) {
         this.name = studentDto.getName();
