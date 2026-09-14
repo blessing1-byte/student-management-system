@@ -22,7 +22,7 @@ public class CourseDao {
 
     public Optional<CourseModel> saveCourse(CourseModel courseModel){
         //string sql student
-        String sql ="INSERT INTO courses(courseName, courseCode, creditUnit)" + "VALUES(?,?,?)";
+        String sql ="INSERT INTO Course(Course_name, Course_code, Credit_unit)" + "VALUES(?,?,?)";
         try(
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement preparedStmt = conn.prepareStatement(sql)
@@ -52,7 +52,7 @@ public class CourseDao {
     //read action
     public List<CourseModel> findAll () {
         List<CourseModel> courses = new ArrayList<>();
-        String sql = "SELECT * FROM courses";
+        String sql = "SELECT * FROM Course";
         try (
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
@@ -62,10 +62,10 @@ public class CourseDao {
             //this simple say after executing the query in result set,move to the next line
             while (resultSet.next()) {
                 CourseModel course = new CourseModel(); //create model
-                course.setCourseId(resultSet.getInt("courseId"));
-                course.setCourseName(resultSet.getString("courseName"));
-                course.setCourseCode(resultSet.getString("courseCode"));
-                course.setCreditUnit(resultSet.getInt("creditUnit"));
+                course.setCourseId(resultSet.getInt("Course_id"));
+                course.setCourseName(resultSet.getString("Course_name"));
+                course.setCourseCode(resultSet.getString("Course_code"));
+                course.setCreditUnit(resultSet.getInt("Credit_unit"));
                 courses.add(course);
             }
             return courses;
@@ -77,20 +77,21 @@ public class CourseDao {
 
     //find by course code
     public Optional<CourseModel> findByCourseCode(String courseCode){
-        String sql = "SELECT courseId, courseName, courseCode, creditUnit from courses WHERE courseCode = ?";
+        String sql = "SELECT Course_id, Course_name, Course_code, Credit_unit " +
+                "FROM Course WHERE Course_code = ?";
         try(
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
         )
         {
-            stmt.setString(3, courseCode);
+            stmt.setString(1, courseCode);
             try(ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     CourseModel course = new CourseModel();
-                    course.setCourseId(rs.getInt("courseId"));
-                    course.setCourseName(rs.getString("courseName"));
-                    course.setCourseCode(rs.getString("courseCode"));
-                    course.setCreditUnit(rs.getInt("creditUnit"));
+                    course.setCourseId(rs.getInt("Course_id"));
+                    course.setCourseName(rs.getString("Course_name"));
+                    course.setCourseCode(rs.getString("Course_code"));
+                    course.setCreditUnit(rs.getInt("Credit_unit"));
                     return Optional.of(course);
                 }
             }
@@ -103,20 +104,20 @@ public class CourseDao {
     //update action
     public boolean updateCourse(CourseModel courseModel){
         //string sql student
-        String sql ="UPDATE courses SET courseName=?, courseCode=?, creditUnit=? WHERE courseId=?";
+        String sql ="UPDATE Course SET Course_name=?, Course_code=?, Credit_unit=? WHERE Course_id=?";
         try(
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement preparedStmt = conn.prepareStatement(sql)
 
         ){
-            preparedStmt.setInt(1,courseModel.getCourseId());
-            preparedStmt.setString(2,courseModel.getCourseName());
-            preparedStmt.setString(3,courseModel.getCourseCode());
-            preparedStmt.setInt(4,courseModel.getCreditUnit());
+            preparedStmt.setString(1,courseModel.getCourseName());
+            preparedStmt.setString(2,courseModel.getCourseCode());
+            preparedStmt.setInt(3,courseModel.getCreditUnit());
+            preparedStmt.setInt(4,courseModel.getCourseId());
 
 
             int rowInserted = preparedStmt.executeUpdate();
-            return rowInserted < 0;
+            return rowInserted > 0;
 
         }catch(SQLException e) {
             System.out.println("Database error: " + e.getMessage());
@@ -126,8 +127,7 @@ public class CourseDao {
 
     //delete action
     public boolean deleteCourse(Integer id) {
-        String sql = "DELETE FROM courses WHERE i" +
-                "courseId = ?";
+        String sql = "DELETE FROM Course WHERE Course_id = ?";
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
@@ -144,5 +144,3 @@ public class CourseDao {
     };
 
 }
-
-
