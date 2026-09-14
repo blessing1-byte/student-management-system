@@ -15,6 +15,7 @@ import org.example.registration.service.EnrollmentService;
 import org.example.registration.service.StudentService;
 import org.example.registration.util.Response;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -92,6 +93,32 @@ public class ConsoleMenu {
         }
     }
 
+    //list response handler
+    private void handleListResponse(Response response) {
+        if (!response.getIsSuccessful()) {
+            System.out.println("Failed: " + response.getMessage());
+            return;
+        }
+
+        System.out.println(response.getMessage());
+
+        Object data = response.getData();
+
+        if (!(data instanceof List<?> items)) {
+            System.out.println("(no data to display)");
+            return;
+        }
+
+        if (items.isEmpty()) {
+            System.out.println("(no records found)");
+            return;
+        }
+
+        for (Object item : items) {
+            System.out.println(item);
+        }
+    }
+
     //create student
     private void addStudent() {
         System.out.println("\n--- Add New Student ---");
@@ -156,7 +183,7 @@ public class ConsoleMenu {
     private void viewStudents() {
         System.out.println("\n--- Viewing All Students ---");
         Response response = studentService.viewStudents();
-        handleResponse(response);
+        handleListResponse(response);
     }
 
     //view courses
@@ -164,7 +191,7 @@ public class ConsoleMenu {
         System.out.println("\n--- Viewing All Courses ---");
         // Wire to courseService fetch methods
         Response response = courseService.viewCourses();
-        handleResponse(response);
+        handleListResponse(response);
     }
 
     //view student records
@@ -174,7 +201,7 @@ public class ConsoleMenu {
         String studentEmail = scanner.nextLine();
         // Wire to enrollmentService fetch methods
         Response response = enrollmentService.viewStudentEnrollments(studentEmail);
-        handleResponse(response);
+        handleListResponse(response);
     }
 
 
