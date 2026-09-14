@@ -18,12 +18,26 @@ public class StudentDao {
     // The StudentDao contains SQL commands for database operations.
     // Business validation belongs in the Service layer.
 
+<<<<<<< HEAD
     // CREATE
     public Optional<StudentModel> saveStudent(StudentModel studentModel) {
 
         String sql = "INSERT INTO Student " +
                 "(Student_name, Student_email, Student_department) " +
                 "VALUES (?, ?, ?)";
+=======
+public Optional<StudentModel> saveStudent(StudentModel studentModel){
+    //string sql student
+    String sql ="INSERT INTO student(name, email, department)" + "VALUES(?,?,?)";
+    try(
+            Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement preparedStmt = conn.prepareStatement(sql)
+
+            ){
+        preparedStmt.setString(1,studentModel.getName());
+        preparedStmt.setString(2,studentModel.getEmail());
+        preparedStmt.setString(3,studentModel.getDepartment().name());
+>>>>>>> origin/main
 
         try (
                 Connection conn = DatabaseConnection.getConnection();
@@ -79,6 +93,7 @@ public class StudentDao {
                 students.add(student);
             }
 
+<<<<<<< HEAD
             return students;
 
         } catch (SQLException e) {
@@ -94,6 +109,12 @@ public class StudentDao {
                 "Student_department FROM Student WHERE Student_email = ?";
 
         try (
+=======
+    //find by email
+    public Optional<StudentModel> findByEmail(String email){
+        String sql = "SELECT id, name, email, department from user WHERE email = ?";
+        try(
+>>>>>>> origin/main
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
