@@ -15,6 +15,7 @@ import org.example.registration.service.EnrollmentService;
 import org.example.registration.service.StudentService;
 import org.example.registration.util.Response;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleMenu {
@@ -36,7 +37,7 @@ public class ConsoleMenu {
 
         while (running) {
             printMenu();
-            int choice = getIntInput("Enter your choice (1-9): ");
+            int choice = getIntInput("Enter your choice (1-10): ");
 
             switch (choice) {
                 case 1: addStudent(); break;
@@ -47,12 +48,13 @@ public class ConsoleMenu {
                 case 6: viewStudentEnrollments(); break;
                 case 7: updateStudent(); break;
                 case 8: deleteRecord(); break;
-                case 9:
+                case 9: deleteEnrollment(); break;
+                case 10:
                     running = false;
                     System.out.println("\nExiting system. Goodbye!");
                     break;
                 default:
-                    System.out.println("\nInvalid option! Please enter a number between 1 and 9.");
+                    System.out.println("\nInvalid option! Please enter a number between 1 and 10.");
             }
         }
     }
@@ -67,7 +69,8 @@ public class ConsoleMenu {
         System.out.println("6. View Student Enrollments");
         System.out.println("7. Update Student");
         System.out.println("8. Delete Record");
-        System.out.println("9. Exit");
+        System.out.println("9. Delete Enrollment");
+        System.out.println("10. Exit");
         System.out.println("===================================");
     }
 
@@ -89,6 +92,32 @@ public class ConsoleMenu {
             System.out.println(response.getMessage());
         } else {
             System.out.println("Failed: " + response.getMessage());
+        }
+    }
+
+    //list response handler
+    private void handleListResponse(Response response) {
+        if (!response.getIsSuccessful()) {
+            System.out.println("Failed: " + response.getMessage());
+            return;
+        }
+
+        System.out.println(response.getMessage());
+
+        Object data = response.getData();
+
+        if (!(data instanceof List<?> items)) {
+            System.out.println("(no data to display)");
+            return;
+        }
+
+        if (items.isEmpty()) {
+            System.out.println("(no records found)");
+            return;
+        }
+
+        for (Object item : items) {
+            System.out.println(item);
         }
     }
 
@@ -156,7 +185,7 @@ public class ConsoleMenu {
     private void viewStudents() {
         System.out.println("\n--- Viewing All Students ---");
         Response response = studentService.viewStudents();
-        handleResponse(response);
+        handleListResponse(response);
     }
 
     //view courses
@@ -164,7 +193,7 @@ public class ConsoleMenu {
         System.out.println("\n--- Viewing All Courses ---");
         // Wire to courseService fetch methods
         Response response = courseService.viewCourses();
-        handleResponse(response);
+        handleListResponse(response);
     }
 
     //view student records
@@ -174,7 +203,7 @@ public class ConsoleMenu {
         String studentEmail = scanner.nextLine();
         // Wire to enrollmentService fetch methods
         Response response = enrollmentService.viewStudentEnrollments(studentEmail);
-        handleResponse(response);
+        handleListResponse(response);
     }
 
 
@@ -235,6 +264,16 @@ public class ConsoleMenu {
         } else {
             System.out.println("Invalid option selected.");
         }
+    }
+
+    //delete enrollment
+    private void deleteEnrollment() {
+        System.out.println("\n--- Delete Enrollment ---");
+        System.out.print("Enter student email: ");
+        String studentEmail = scanner.nextLine();
+
+        Response response = enrollmentService.deleteStudentEnrollment(studentEmail);
+        handleResponse(response);
     }
 
 }
