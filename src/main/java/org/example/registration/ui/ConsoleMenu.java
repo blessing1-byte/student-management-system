@@ -37,7 +37,7 @@ public class ConsoleMenu {
 
         while (running) {
             printMenu();
-            int choice = getIntInput("Enter your choice (1-9): ");
+            int choice = getIntInput("Enter your choice (1-10): ");
 
             switch (choice) {
                 case 1: addStudent(); break;
@@ -48,12 +48,13 @@ public class ConsoleMenu {
                 case 6: viewStudentEnrollments(); break;
                 case 7: updateStudent(); break;
                 case 8: deleteRecord(); break;
-                case 9:
+                case 9: deleteEnrollment(); break;
+                case 10:
                     running = false;
                     System.out.println("\nExiting system. Goodbye!");
                     break;
                 default:
-                    System.out.println("\nInvalid option! Please enter a number between 1 and 9.");
+                    System.out.println("\nInvalid option! Please enter a number between 1 and 10.");
             }
         }
     }
@@ -68,7 +69,8 @@ public class ConsoleMenu {
         System.out.println("6. View Student Enrollments");
         System.out.println("7. Update Student");
         System.out.println("8. Delete Record");
-        System.out.println("9. Exit");
+        System.out.println("9. Delete Enrollment");
+        System.out.println("10. Exit");
         System.out.println("===================================");
     }
 
@@ -262,6 +264,16 @@ public class ConsoleMenu {
         } else {
             System.out.println("Invalid option selected.");
         }
+    }
+
+    //delete enrollment
+    private void deleteEnrollment() {
+        System.out.println("\n--- Delete Enrollment ---");
+        System.out.print("Enter student email: ");
+        String studentEmail = scanner.nextLine();
+
+        Response response = enrollmentService.deleteStudentEnrollment(studentEmail);
+        handleResponse(response);
     }
 
 }

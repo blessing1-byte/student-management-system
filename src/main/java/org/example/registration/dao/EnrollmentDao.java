@@ -64,4 +64,21 @@ public class EnrollmentDao {
 
         return Optional.empty();
     };
+
+    public boolean deleteStudentEnrollment(Integer Student_id){
+        String sql = "DELETE Enrollment_id, Student_id, Course_id from Enrollment where Student_id =?";
+        try(
+                Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ){
+            stmt.setInt(1, Student_id);
+
+            int rowsAffected = stmt.executeUpdate();
+            return  rowsAffected > 0;
+
+        }catch(SQLException e){
+            System.out.println("Database error: " + e.getMessage());
+            return  false;
+        }
+    }
 }
