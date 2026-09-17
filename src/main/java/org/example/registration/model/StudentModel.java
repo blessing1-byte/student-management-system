@@ -3,21 +3,30 @@ package org.example.registration.model;
 import org.example.registration.dto.StudentDto;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class StudentModel {
-
+    //id, name, email
     private Integer id;
     private String name;
     private String email;
     private Department department;
 
-    // This is essential for fetch in the repo to prevent it from asking for an argument
-    public StudentModel() {}
+    //this is essential for fetch in the repo to prevent it from asking for an argument
+    public StudentModel(){};
 
     public StudentModel(StudentDto studentDto) {
         this.name = studentDto.getName();
         this.email = studentDto.getEmail();
         this.department = studentDto.getDepartment();
+    }
+
+    @Override
+    public String toString() {
+        return "Student ID: " + id +
+                ", Name: " + name +
+                ", Email: " + email +
+                ", Department: " + department;
     }
 
     public Integer getId() {
@@ -56,13 +65,8 @@ public class StudentModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         StudentModel that = (StudentModel) o;
-
-        return Objects.equals(id, that.id)
-                && Objects.equals(name, that.name)
-                && Objects.equals(email, that.email)
-                && department == that.department;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && department == that.department;
     }
 
     @Override
