@@ -1,9 +1,11 @@
 package org.example.registration.service;
 
+import org.example.registration.dao.EnrollmentDao;
 import org.example.registration.dao.StudentDao;
 import org.example.registration.dto.StudentDto;
 import org.example.registration.dto.UpdatesStudentDto;
 import org.example.registration.model.Department;
+import org.example.registration.model.EnrollmentModel;
 import org.example.registration.model.StudentModel;
 import org.example.registration.util.Response;
 
@@ -22,6 +24,7 @@ import java.util.Optional;
         public class StudentService {
             //holds the repo methods
             private final StudentDao studentDao = new StudentDao();
+          private final  EnrollmentDao enrollmentDao = new EnrollmentDao();
 
     //first service: create student
     public Response addStudent(StudentDto studentDto){
@@ -123,14 +126,24 @@ import java.util.Optional;
 
         StudentModel existingStudent = foundStudent.get();
 
-        boolean isDeleted = studentDao.deleteStudent(existingStudent.getId());
+        Integer Student_id = existingStudent.getId();
 
-        if (!isDeleted) {
-            return new Response(false, "Failed to delete student", null);
-        }
 
-        return new Response(true, "Student deleted successfully", null);
-    }
+        List <EnrollmentModel> studentEnrollment = enrollmentDao.findByStudentId(Student_id);
+
+        if (studentEnrollment.isEmpty()) {
+            boolean isDeleted = studentDao.deleteStudent(Student_id);
+
+            if (!isDeleted) {
+                return new Response(false, "Failed to delete student", null);
+            }
+                return new Response(true, "Student deleted successfully", null);
+
+        } else
+            return new Response(false,
+                    "Student is currently enrolled in a course, pls terminate enrollment to proceed.",
+                    null);
+               };
 
 
 

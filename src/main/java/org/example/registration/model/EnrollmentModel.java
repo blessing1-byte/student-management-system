@@ -14,6 +14,14 @@ public class EnrollmentModel {
         this.courseId = courseId;
     }
 
+    // EnrollmentModel
+    @Override
+    public String toString() {
+        return "Enrollment ID: " + id +
+                ", Student ID: " + studentId +
+                ", Course ID: " + courseId;
+    }
+
     public Integer getId() {
         return id;
     }
