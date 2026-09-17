@@ -129,7 +129,7 @@ import java.util.Optional;
         Integer Student_id = existingStudent.getId();
 
 
-        Optional<EnrollmentModel> studentEnrollment = enrollmentDao.findByStudentId(Student_id);
+        List <EnrollmentModel> studentEnrollment = enrollmentDao.findByStudentId(Student_id);
 
         if (studentEnrollment.isEmpty()) {
             boolean isDeleted = studentDao.deleteStudent(Student_id);

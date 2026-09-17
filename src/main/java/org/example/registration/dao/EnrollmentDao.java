@@ -37,34 +37,30 @@ public class EnrollmentDao {
     };
 
     //view student enrollment
-    public Optional<EnrollmentModel> findByStudentId(Integer studentId){
-        List<EnrollmentModel> records = new ArrayList<>();
-        String sql = "SELECT Enrollment_id, Student_id, Course_id from Enrollment where Student_id =?";
+    public List<EnrollmentModel> findByStudentId(Integer studentId) {
+        List<EnrollmentModel> enrollments = new ArrayList<>();
+        String sql = "SELECT * FROM Enrollment WHERE Student_id = ?";
 
-        try(
+        try (
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)
-
-        ){
+        ) {
             stmt.setInt(1, studentId);
-            try(ResultSet rs = stmt.executeQuery()){
-                //while there is still a next line. keep looping and setting all the necessary details
-                while(rs.next()){
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
                     EnrollmentModel enrollment = new EnrollmentModel();
                     enrollment.setId(rs.getInt("Enrollment_id"));
                     enrollment.setStudentId(rs.getInt("Student_id"));
                     enrollment.setCourseId(rs.getInt("Course_id"));
-                    return Optional.of(enrollment);
+                    enrollments.add(enrollment);
                 }
             }
-
         } catch (SQLException e) {
-            System.out.println("Database Error "+ e.getMessage());
+            System.out.println("Database error: " + e.getMessage());
         }
-
-        return Optional.empty();
-    };
-
+        return enrollments;
+    }
     public boolean deleteStudentEnrollment(Integer Student_id){
         String sql = "DELETE FROM Enrollment where Student_id = ?";
         try(

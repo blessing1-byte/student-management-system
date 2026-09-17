@@ -52,21 +52,20 @@ public class EnrollmentService {
     };
 
 
-public Response viewStudentEnrollments(String studentEmail){
-    Optional<StudentModel> student = studentDao.findByEmail(studentEmail);
-    if (student.isEmpty()){
-        return  new Response(false, "student not found", null);
-    }
-    StudentModel foundStudent = student.get();
-    Integer foundId = foundStudent.getId();
+    public Response viewStudentEnrollments(String studentEmail) {
+        Optional<StudentModel> student = studentDao.findByEmail(studentEmail);
+        if (student.isEmpty()) {
+            return new Response(false, "student not found", null);
+        }
+        StudentModel foundStudent = student.get();
+        Integer foundId = foundStudent.getId();
 
-    Optional<EnrollmentModel> studentRecords = enrollmentDao.findByStudentId(foundId);
-    if(studentRecords.isEmpty()){
-        return new Response(false, "Student has no records to show yet.", null);
+        List<EnrollmentModel> studentRecords = enrollmentDao.findByStudentId(foundId);
+        if (studentRecords.isEmpty()) {
+            return new Response(true, "Student has no enrollments yet.", studentRecords);
+        }
+        return new Response(true, "Student enrollment records fetched successfully", studentRecords);
     }
-    return new Response(true, "student enrollment records fetched successfully", studentRecords);
-
-};
 
 public Response deleteStudentEnrollment(String email){
     Optional<StudentModel> foundStudent = studentDao.findByEmail(email);
