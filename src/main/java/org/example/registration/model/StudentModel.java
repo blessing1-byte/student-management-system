@@ -21,6 +21,13 @@ public class StudentModel {
         this.department = studentDto.getDepartment();
     }
 
+    @Override
+    public String toString() {
+        return "Student ID: " + id +
+                ", Name: " + name +
+                ", Email: " + email +
+                ", Department: " + department;
+    }
 
     public Integer getId() {
         return id;

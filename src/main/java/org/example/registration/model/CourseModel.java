@@ -19,6 +19,15 @@ public class CourseModel {
     }
 
 
+    // CourseModel
+    @Override
+    public String toString() {
+        return "Course ID: " + courseId +
+                ", Name: " + courseName +
+                ", Code: " + courseCode +
+                ", Credit Unit: " + creditUnit;
+    }
+
     public Integer getCourseId() {
         return courseId;
     }

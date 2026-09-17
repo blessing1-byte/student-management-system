@@ -66,7 +66,7 @@ public class EnrollmentDao {
     };
 
     public boolean deleteStudentEnrollment(Integer Student_id){
-        String sql = "DELETE Enrollment_id, Student_id, Course_id from Enrollment where Student_id =?";
+        String sql = "DELETE Enrollment where Student_id =?";
         try(
                 Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql);
